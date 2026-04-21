@@ -1,7 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,700&family=Space+Grotesk:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,700&family=Roboto:wght@400;500;700&family=Space+Grotesk:wght@400;500;700&display=swap');
 
 :root {
-  font-family: 'Space Grotesk', 'Trebuchet MS', sans-serif;
+  font-family: 'Roboto', 'Space Grotesk', 'Trebuchet MS', sans-serif;
   color: #16221e;
   background: #edf2e7;
   line-height: 1.35;

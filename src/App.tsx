@@ -91,7 +91,7 @@ function App() {
 
   return (
     <main className="page-shell">
-      <section className="canvas">
+      <section className="canvas ">
         <header className="gender-header">
           <p>Choose your pet's gender</p>
           <div className="gender-switch" role="radiogroup" aria-label="Pet gender">
@@ -113,7 +113,13 @@ function App() {
           </div>
         </header>
 
+        
+
+       
+
+        <section className='toolbar-main-color'>
         <section className="toolbar" aria-label="Top filters">
+              
           <span className="toolbar-title">Filters</span>
           {filterGroups.map((group) => {
             const isActive = group.categoryIds.some((categoryId) =>
@@ -172,8 +178,9 @@ function App() {
             Clear
           </button>
         </section>
-
-        {selectedCategories.length > 0 && (
+              
+       <section className='selected-container'>
+          {selectedCategories.length > 0 && (
           <section className="selected-strip" aria-label="Selected filters">
             {selectedCategories.map((category) => (
               <button
@@ -189,8 +196,12 @@ function App() {
             ))}
           </section>
         )}
+       </section>
+
+        </section>
 
         <section className="main-area">
+        
           <h1 className="section-title">All pets names</h1>
 
           <div className="letters-wrap" aria-label="Letters">
@@ -216,13 +227,13 @@ function App() {
           {!selectedName && !hasRefinement ? (
             <section className="cover-card">
               <h2>I NEED A NAME</h2>
-              <button
+              {/* <button
                 type="button"
                 className="cover-cta"
                 onClick={() => setSelectedNameId(filteredNames[0]?.id ?? null)}
               >
                 Browse all names
-              </button>
+              </button> */}
               <img src={coverPuppy} alt="Puppy sitting" className="cover-image" />
             </section>
           ) : (
