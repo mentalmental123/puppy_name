@@ -1,0 +1,400 @@
+:root {
+  --paper: #f7f7f4;
+  --paper-2: #fdfdfc;
+  --backdrop: #d8d8d8;
+  --line: #e6e6e6;
+  --text: #3f3f3f;
+  --text-soft: #7f7f7f;
+  --accent: #e7373a;
+}
+
+.page-shell {
+  min-height: 100vh;
+  padding: 2rem 1rem 2.5rem;
+  background: var(--backdrop);
+  color: var(--text);
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+
+.canvas {
+  max-width: 1320px;
+  margin: 0 auto;
+  background: var(--paper);
+  border: 1px solid #cfcfcf;
+}
+
+.gender-header {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper-2);
+}
+
+.gender-header p {
+  margin: 0;
+  font-size: 0.72rem;
+  color: #6b6b6b;
+}
+
+.gender-switch {
+  margin-top: 0.45rem;
+  display: flex;
+  gap: 0.35rem;
+}
+
+.pill {
+  border: 1px solid #f0c8c8;
+  background: #fff;
+  color: #c85052;
+  font-size: 0.62rem;
+  padding: 0.24rem 0.54rem;
+  cursor: pointer;
+}
+
+.pill.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.toolbar {
+  border-bottom: 1px solid var(--line);
+  background: #fff;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.8rem;
+}
+
+.toolbar-title {
+  font-size: 0.65rem;
+  font-weight: 600;
+  margin-right: 0.35rem;
+}
+
+.toolbar-item {
+  border: none;
+  background: transparent;
+  font-size: 0.61rem;
+  color: #6a6a6a;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  cursor: pointer;
+}
+
+.toolbar-item.active {
+  color: var(--accent);
+}
+
+.toolbar-item span {
+  color: var(--accent);
+}
+
+.toolbar-select,
+.toolbar-search,
+.toolbar-clear {
+  border: 1px solid #ececec;
+  background: #fff;
+  color: #5b5b5b;
+  font-size: 0.62rem;
+  padding: 0.16rem 0.3rem;
+}
+
+.toolbar-search {
+  min-width: 120px;
+}
+
+.toolbar-clear {
+  cursor: pointer;
+}
+
+.selected-strip {
+  padding: 0.35rem 0.85rem;
+  display: flex;
+  gap: 0.3rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.selected-tag {
+  border: 1px solid #ffd6d7;
+  background: #fff;
+  color: var(--accent);
+  font-size: 0.6rem;
+  padding: 0.16rem 0.35rem;
+  cursor: pointer;
+}
+
+.main-area {
+  padding: 0.85rem 1rem 1.2rem;
+}
+
+.section-title {
+  margin: 0;
+  font-family: 'Times New Roman', serif;
+  font-size: 1.6rem;
+  font-weight: 400;
+}
+
+.letters-wrap {
+  margin-top: 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding: 0.22rem 0.25rem;
+  gap: 0.18rem;
+}
+
+.letter {
+  border: none;
+  background: transparent;
+  color: #666;
+  font-family: 'Times New Roman', serif;
+  font-size: 0.73rem;
+  min-width: 1.15rem;
+  height: 1.15rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.letter.is-active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.cover-card {
+  min-height: 390px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin-top: 1.15rem;
+}
+
+.cover-card h2 {
+  margin: 0;
+  font-size: clamp(3.8rem, 12vw, 9rem);
+  line-height: 0.9;
+  color: var(--accent);
+  letter-spacing: 0.02em;
+  font-family: 'Times New Roman', serif;
+  font-weight: 700;
+  text-align: center;
+}
+
+.cover-image {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  /* max-height: 290px; */
+  max-height: 670px;
+}
+
+.cover-cta {
+  margin-top: 0.8rem;
+  border: 1px solid var(--accent);
+  background: #fff;
+  color: var(--accent);
+  font-size: 0.78rem;
+  padding: 0.34rem 0.7rem;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.finder-grid {
+  margin-top: 1.2rem;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 1.8rem;
+}
+
+.names-column {
+  min-height: 340px;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  align-items: center;
+}
+
+.arrow-btn {
+  border: none;
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 1.2rem;
+  line-height: 1;
+  width: fit-content;
+}
+
+.arrow-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.names-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.28rem;
+}
+
+.name-row {
+  border: none;
+  background: transparent;
+  color: #8b8b8b;
+  font-size: 1.95rem;
+  line-height: 1;
+  font-family: 'Times New Roman', serif;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+}
+
+.name-row.is-selected {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.detail-column {
+  border-top: 1px solid var(--line);
+  padding-top: 0.4rem;
+  min-height: 340px;
+}
+
+.detail-top {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 0.8rem;
+}
+
+.detail-image {
+  width: 190px;
+  max-width: 42%;
+  object-fit: contain;
+}
+
+.gender-mark {
+  margin: 0;
+  font-size: 0.84rem;
+  color: #4b4b4b;
+}
+
+.gender-mark span {
+  color: #6f6f6f;
+}
+
+.detail-top h3 {
+  margin: 0.55rem 0 0;
+  color: var(--accent);
+  font-family: 'Times New Roman', serif;
+  font-size: 2.85rem;
+  line-height: 0.9;
+}
+
+.detail-text {
+  color: #747474;
+  margin: 0.8rem 0 0;
+  max-width: 650px;
+  line-height: 1.9;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 0.9rem;
+  font-size: 1.05rem;
+}
+
+.detail-subtitle {
+  margin: 0.75rem 0 0.1rem;
+  font-size: 0.72rem;
+  color: #666;
+}
+
+.detail-meta {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #909090;
+}
+
+.detail-dots {
+  margin: 0.85rem 0 0;
+  text-align: right;
+  letter-spacing: 0.22em;
+  color: #4f4f4f;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.detail-placeholder {
+  color: #777;
+  font-size: 0.92rem;
+  margin: 1.8rem 0 0;
+}
+
+.status {
+  text-align: center;
+  padding: 4rem 0;
+}
+
+.error-box {
+  max-width: 500px;
+  margin: 9vh auto;
+  background: #fff;
+  border: 1px solid var(--line);
+  padding: 1.2rem;
+  text-align: center;
+}
+
+@media (max-width: 1024px) {
+  .finder-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .names-column {
+    min-height: unset;
+  }
+
+  .name-row {
+    font-size: 1.5rem;
+  }
+
+  .detail-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .detail-image {
+    width: 140px;
+    max-width: 100%;
+  }
+
+  .detail-top h3 {
+    font-size: 2rem;
+  }
+
+  .detail-text {
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .cover-card {
+    min-height: 320px;
+  }
+
+  .cover-card h2 {
+    font-size: clamp(3rem, 12vw, 5.6rem);
+  }
+
+  .cover-image {
+    max-height: 220px;
+  }
+}

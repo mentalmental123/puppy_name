@@ -1,0 +1,201 @@
+{
+  "data": [
+    {
+      "id": "019c8a34-3585-7249-b7c2-a4f85945291e",
+      "name": "Cartoon",
+      "description": "\u003Cp\u003E\u003C/p\u003E"
+    },
+    {
+      "id": "019c8a34-35ed-737c-acff-a43af999817c",
+      "name": "Celebrities",
+      "description": null
+    },
+    {
+      "id": "019c8a34-35f2-70b1-b866-69a4921d15a8",
+      "name": "Disney",
+      "description": null
+    },
+    {
+      "id": "019c8a34-35f6-70a9-bda7-5f0eaf8a07d5",
+      "name": "Drinks",
+      "description": null
+    },
+    {
+      "id": "019c8a34-35fa-71aa-96d2-430cba480210",
+      "name": "Foodie",
+      "description": null
+    },
+    {
+      "id": "019c8a34-35fe-70e0-92dd-bf88d629b6bd",
+      "name": "French",
+      "description": null
+    },
+    {
+      "id": "019c8a34-3602-72a8-9455-e08065e0777f",
+      "name": "Greek",
+      "description": null
+    },
+    {
+      "id": "019c8a34-3605-7035-a765-6369f4a01b7b",
+      "name": "Italian",
+      "description": null
+    },
+    {
+      "id": "019c8a34-3608-7310-857c-1c05bef421fc",
+      "name": "Large",
+      "description": null
+    },
+    {
+      "id": "019c8a34-360b-735c-88e7-5d86357a91a2",
+      "name": "Literary",
+      "description": null
+    },
+    {
+      "id": "019c8a34-360e-727f-8ca1-81db96aba0f1",
+      "name": "Magical and Mythical",
+      "description": null
+    },
+    {
+      "id": "019c8a34-3611-73a8-90ac-bbacd3959385",
+      "name": "Most Popular",
+      "description": null
+    },
+    {
+      "id": "019c8a34-3614-71a6-b955-df5540ecdfce",
+      "name": "Musical",
+      "description": null
+    },
+    {
+      "id": "019c8a34-3617-70d5-a0bf-80fcf53288d4",
+      "name": "Nature",
+      "description": null
+    },
+    {
+      "id": "019c8a34-3619-7134-a023-806d72219174",
+      "name": "Optimistic",
+      "description": null
+    },
+    {
+      "id": "019c8a34-361c-73fb-b8c9-db6b77d32feb",
+      "name": "Regal",
+      "description": null
+    },
+    {
+      "id": "019c8a34-361f-73d0-b3e4-ea8c48534146",
+      "name": "Scottish",
+      "description": null
+    },
+    {
+      "id": "019c8a34-3621-715f-96e3-a9ce5aa5de45",
+      "name": "Short Names",
+      "description": null
+    },
+    {
+      "id": "019c8a34-3624-7028-8af2-b9ad32f57ccb",
+      "name": "Small",
+      "description": null
+    },
+    {
+      "id": "019c8a34-3627-7210-8e6c-478589659de5",
+      "name": "Space and Science",
+      "description": null
+    },
+    {
+      "id": "019c8a34-3629-703f-a33b-e128ebf3945c",
+      "name": "Spanish",
+      "description": null
+    },
+    {
+      "id": "019c8a34-362d-7087-99c4-1a4eb48d3f6b",
+      "name": "Unusual",
+      "description": null
+    },
+    {
+      "id": "019c8a34-362f-7096-8883-def3ce86d797",
+      "name": "Norse",
+      "description": null
+    },
+    {
+      "id": "019c8a34-3632-730d-abe7-586246a7a24c",
+      "name": "German",
+      "description": null
+    },
+    {
+      "id": "019c8a34-3635-7045-94b9-50a8908e6c31",
+      "name": "Chinese",
+      "description": null
+    }
+  ],
+  "filterGroups": [
+    {
+      "id": "famous",
+      "label": "Famous",
+      "categoryIds": [
+        "019c8a34-3585-7249-b7c2-a4f85945291e",
+        "019c8a34-35ed-737c-acff-a43af999817c",
+        "019c8a34-35f2-70b1-b866-69a4921d15a8",
+        "019c8a34-360b-735c-88e7-5d86357a91a2",
+        "019c8a34-3611-73a8-90ac-bbacd3959385",
+        "019c8a34-3614-71a6-b955-df5540ecdfce",
+        "019c8a34-361c-73fb-b8c9-db6b77d32feb"
+      ]
+    },
+    {
+      "id": "pets-size",
+      "label": "Pet's size",
+      "categoryIds": [
+        "019c8a34-3608-7310-857c-1c05bef421fc",
+        "019c8a34-3624-7028-8af2-b9ad32f57ccb"
+      ]
+    },
+    {
+      "id": "joyful",
+      "label": "Joyful",
+      "categoryIds": [
+        "019c8a34-3619-7134-a023-806d72219174",
+        "019c8a34-3617-70d5-a0bf-80fcf53288d4"
+      ]
+    },
+    {
+      "id": "funny",
+      "label": "Funny",
+      "categoryIds": [
+        "019c8a34-3585-7249-b7c2-a4f85945291e",
+        "019c8a34-35f2-70b1-b866-69a4921d15a8",
+        "019c8a34-362d-7087-99c4-1a4eb48d3f6b"
+      ]
+    },
+    {
+      "id": "food-and-drinks",
+      "label": "Food and drinks",
+      "categoryIds": [
+        "019c8a34-35f6-70a9-bda7-5f0eaf8a07d5",
+        "019c8a34-35fa-71aa-96d2-430cba480210"
+      ]
+    },
+    {
+      "id": "international",
+      "label": "International",
+      "categoryIds": [
+        "019c8a34-35fe-70e0-92dd-bf88d629b6bd",
+        "019c8a34-3602-72a8-9455-e08065e0777f",
+        "019c8a34-3605-7035-a765-6369f4a01b7b",
+        "019c8a34-361f-73d0-b3e4-ea8c48534146",
+        "019c8a34-3629-703f-a33b-e128ebf3945c",
+        "019c8a34-362f-7096-8883-def3ce86d797",
+        "019c8a34-3632-730d-abe7-586246a7a24c",
+        "019c8a34-3635-7045-94b9-50a8908e6c31"
+      ]
+    },
+    {
+      "id": "others",
+      "label": "Others",
+      "categoryIds": [
+        "019c8a34-360e-727f-8ca1-81db96aba0f1",
+        "019c8a34-3621-715f-96e3-a9ce5aa5de45",
+        "019c8a34-3627-7210-8e6c-478589659de5",
+        "019c8a34-362d-7087-99c4-1a4eb48d3f6b"
+      ]
+    }
+  ]
+}
