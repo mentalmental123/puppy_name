@@ -1,25 +1,45 @@
-import { useEffect, useMemo, useReducer, useState } from 'react';
+import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import './App.css';
 import coverPuppy from './data/pictures/white-black-puppy.png';
 import detailPuppy from './data/pictures/white-brown-puppy.png';
+import facebookIcon from './data/icons/fb.svg';
+import instagramIcon from './data/icons/instgrm.svg';
+import xIcon from './data/icons/x.svg';
 import { usePetData } from './hooks/usePetData';
 import { filtersReducer, initialFiltersState } from './state/filters';
 import { filterAndSortNames, paginate } from './utils/nameFilters';
 
 const PAGE_SIZE = 9;
+const GENDER_OPTIONS = ['male', 'female', 'both'] as const;
+const SOCIAL_LINKS = [
+  {
+    href: 'https://www.facebook.com/purina/',
+    icon: facebookIcon,
+    label: 'Purina on Facebook'
+  },
+  {
+    href: 'https://www.instagram.com/purina/',
+    icon: instagramIcon,
+    label: 'Purina on Instagram'
+  },
+  {
+    href: 'https://x.com/Purina',
+    icon: xIcon,
+    label: 'Purina on X'
+  }
+] as const;
 
 function App() {
   const { data, loading, error } = usePetData();
   const [filters, dispatch] = useReducer(filtersReducer, initialFiltersState);
   const [selectedNameId, setSelectedNameId] = useState<string | null>(null);
+  const [openGroupId, setOpenGroupId] = useState<string | null>(null);
+  const closeGroupTimeoutRef = useRef<number | null>(null);
 
-  const filteredNames = useMemo(() => {
-    if (!data) {
-      return [];
-    }
-
-    return filterAndSortNames(data.names, filters);
-  }, [data, filters]);
+  const filteredNames = useMemo(
+    () => (data ? filterAndSortNames(data.names, filters) : []),
+    [data, filters]
+  );
 
   const totalPages = Math.max(1, Math.ceil(filteredNames.length / PAGE_SIZE));
 
@@ -47,15 +67,32 @@ function App() {
     }
   }, [selectedNameId, filteredNames]);
 
-  const selectedName = useMemo(
-    () => filteredNames.find((item) => item.id === selectedNameId) ?? null,
-    [filteredNames, selectedNameId]
-  );
+  const selectedName = useMemo(() => {
+    return filteredNames.find((item) => item.id === selectedNameId) ?? null;
+  }, [filteredNames, selectedNameId]);
 
   const visibleNames = useMemo(
     () => paginate(filteredNames, filters.page, PAGE_SIZE),
     [filteredNames, filters.page]
   );
+
+  const categoryLabelById = useMemo(() => {
+    const categories = data?.categories ?? [];
+    return new Map(categories.map((category) => [category.id, category.label]));
+  }, [data]);
+
+  const nameById = useMemo(() => {
+    const names = data?.names ?? [];
+    return new Map(names.map((name) => [name.id, name.name]));
+  }, [data]);
+
+  useEffect(() => {
+    return () => {
+      if (closeGroupTimeoutRef.current !== null) {
+        window.clearTimeout(closeGroupTimeoutRef.current);
+      }
+    };
+  }, []);
 
   if (loading) {
     return (
@@ -88,14 +125,55 @@ function App() {
           label: category.label,
           categoryIds: [category.id]
         }));
+  const groupedCategories = filterGroups.map((group) => ({
+    ...group,
+    categories: data.categories.filter((category) =>
+      group.categoryIds.includes(category.id)
+    )
+  }));
+
+  const selectedNameCategoryLabel = selectedName
+    ? (selectedName.categoryIds
+        .map((categoryId) => categoryLabelById.get(categoryId))
+        .find((label): label is string => typeof label === 'string') ?? 'General')
+    : 'General';
+
+  const relatedNamesText = selectedName
+    ? selectedName.relatedNameIds
+        .map((id) => nameById.get(id))
+        .filter((name): name is string => typeof name === 'string')
+        .join(' - ') || 'None'
+    : 'None';
+
+  function clearPendingGroupClose() {
+    if (closeGroupTimeoutRef.current !== null) {
+      window.clearTimeout(closeGroupTimeoutRef.current);
+      closeGroupTimeoutRef.current = null;
+    }
+  }
+
+  function openGroup(groupId: string) {
+    clearPendingGroupClose();
+
+    setOpenGroupId(groupId);
+  }
+
+  function scheduleCloseGroup(groupId: string) {
+    clearPendingGroupClose();
+
+    closeGroupTimeoutRef.current = window.setTimeout(() => {
+      setOpenGroupId((current) => (current === groupId ? null : current));
+      closeGroupTimeoutRef.current = null;
+    }, 160);
+  }
 
   return (
     <main className="page-shell">
-      <section className="canvas ">
+      <section className="canvas">
         <header className="gender-header">
           <p>Choose your pet's gender</p>
           <div className="gender-switch" role="radiogroup" aria-label="Pet gender">
-            {['male', 'female', 'both'].map((gender) => (
+            {GENDER_OPTIONS.map((gender) => (
               <button
                 key={gender}
                 type="button"
@@ -103,7 +181,7 @@ function App() {
                 onClick={() =>
                   dispatch({
                     type: 'set-gender',
-                    payload: gender as 'male' | 'female' | 'both'
+                    payload: gender
                   })
                 }
               >
@@ -113,95 +191,87 @@ function App() {
           </div>
         </header>
 
-        
+        <section className="toolbar-main-color">
+          <section className="toolbar" aria-label="Top filters">
+            {groupedCategories.map((group) => {
+              const isActive = group.categoryIds.some((categoryId) =>
+                filters.categoryIds.includes(categoryId)
+              );
+              const isOpen = openGroupId === group.id;
 
-       
+              return (
+                <div
+                  key={group.id}
+                  className={
+                    isActive || isOpen ? 'toolbar-group active' : 'toolbar-group'
+                  }
+                  onMouseEnter={() => openGroup(group.id)}
+                  onMouseLeave={() => scheduleCloseGroup(group.id)}
+                >
+                  <button
+                    type="button"
+                    className={
+                      isActive || isOpen ? 'toolbar-item active' : 'toolbar-item'
+                    }
+                    onClick={() =>
+                      setOpenGroupId((current) =>
+                        current === group.id ? null : group.id
+                      )
+                    }
+                    aria-expanded={isOpen}
+                  >
+                    {group.label}
+                    <span aria-hidden="true">{isOpen ? '−' : 'v'}</span>
+                  </button>
 
-        <section className='toolbar-main-color'>
-        <section className="toolbar" aria-label="Top filters">
-              
-          <span className="toolbar-title">Filters</span>
-          {filterGroups.map((group) => {
-            const isActive = group.categoryIds.some((categoryId) =>
-              filters.categoryIds.includes(categoryId)
-            );
+                  <div
+                    className={isOpen ? 'toolbar-dropdown is-open' : 'toolbar-dropdown'}
+                  >
+                    {group.categories.map((category) => {
+                      const isCategoryActive = filters.categoryIds.includes(category.id);
 
-            return (
-              <button
-                key={group.id}
-                type="button"
-                className={isActive ? 'toolbar-item active' : 'toolbar-item'}
-                onClick={() => {
-                  const nextCategoryIds = isActive
-                    ? filters.categoryIds.filter((id) => !group.categoryIds.includes(id))
-                    : [...new Set([...filters.categoryIds, ...group.categoryIds])];
-
-                  dispatch({ type: 'set-categories', payload: nextCategoryIds });
-                }}
-              >
-                {group.label}
-                <span aria-hidden="true">v</span>
-              </button>
-            );
-          })}
-          <select
-            value={filters.sortDirection}
-            onChange={(event) =>
-              dispatch({
-                type: 'set-sort',
-                payload: event.target.value as 'asc' | 'desc'
-              })
-            }
-            className="toolbar-select"
-            aria-label="Sort names"
-          >
-            <option value="asc">A-Z</option>
-            <option value="desc">Z-A</option>
-          </select>
-          <input
-            type="search"
-            value={filters.search}
-            placeholder="Search"
-            className="toolbar-search"
-            onChange={(event) =>
-              dispatch({ type: 'set-search', payload: event.target.value })
-            }
-          />
-          <button
-            type="button"
-            className="toolbar-clear"
-            onClick={() => {
-              dispatch({ type: 'clear-filters' });
-              setSelectedNameId(null);
-            }}
-          >
-            Clear
-          </button>
-        </section>
-              
-       <section className='selected-container'>
-          {selectedCategories.length > 0 && (
-          <section className="selected-strip" aria-label="Selected filters">
-            {selectedCategories.map((category) => (
-              <button
-                key={category.id}
-                type="button"
-                className="selected-tag"
-                onClick={() =>
-                  dispatch({ type: 'toggle-category', payload: category.id })
-                }
-              >
-                {category.label}
-              </button>
-            ))}
+                      return (
+                        <button
+                          key={category.id}
+                          type="button"
+                          className={
+                            isCategoryActive ? 'dropdown-item is-active' : 'dropdown-item'
+                          }
+                          onClick={() =>
+                            dispatch({ type: 'toggle-category', payload: category.id })
+                          }
+                        >
+                          {category.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
           </section>
-        )}
-       </section>
 
+          <section className="selected-container">
+            {selectedCategories.length > 0 && (
+              <section className="selected-strip" aria-label="Selected filters">
+                {selectedCategories.map((category) => (
+                  <button
+                    key={category.id}
+                    type="button"
+                    className="selected-tag"
+                    onClick={() =>
+                      dispatch({ type: 'toggle-category', payload: category.id })
+                    }
+                  >
+                    {category.label}
+                  </button>
+                ))}
+              </section>
+            )}
+          </section>
         </section>
 
         <section className="main-area">
-        
           <h1 className="section-title">All pets names</h1>
 
           <div className="letters-wrap" aria-label="Letters">
@@ -224,16 +294,45 @@ function App() {
             ))}
           </div>
 
+          <section className="search-controls" aria-label="Sort and search controls">
+            <select
+              value={filters.sortDirection}
+              onChange={(event) =>
+                dispatch({
+                  type: 'set-sort',
+                  payload: event.target.value as 'asc' | 'desc'
+                })
+              }
+              className="toolbar-select"
+              aria-label="Sort names"
+            >
+              <option value="asc">A-Z</option>
+              <option value="desc">Z-A</option>
+            </select>
+            <input
+              type="search"
+              value={filters.search}
+              placeholder="Search"
+              className="toolbar-search"
+              onChange={(event) =>
+                dispatch({ type: 'set-search', payload: event.target.value })
+              }
+            />
+            <button
+              type="button"
+              className="toolbar-clear"
+              onClick={() => {
+                dispatch({ type: 'clear-filters' });
+                setSelectedNameId(null);
+              }}
+            >
+              Clear
+            </button>
+          </section>
+
           {!selectedName && !hasRefinement ? (
             <section className="cover-card">
               <h2>I NEED A NAME</h2>
-              {/* <button
-                type="button"
-                className="cover-cta"
-                onClick={() => setSelectedNameId(filteredNames[0]?.id ?? null)}
-              >
-                Browse all names
-              </button> */}
               <img src={coverPuppy} alt="Puppy sitting" className="cover-image" />
             </section>
           ) : (
@@ -301,28 +400,14 @@ function App() {
                             : selectedName.gender === 'female'
                               ? 'Female'
                               : 'Unisex'}
-                          <span>
-                            {' '}
-                            -{' '}
-                            {data.categories.find((item) =>
-                              selectedName.categoryIds.includes(item.id)
-                            )?.label ?? 'General'}
-                          </span>
+                          <span> - {selectedNameCategoryLabel}</span>
                         </p>
                         <h3>{selectedName.name}</h3>
                       </div>
                     </div>
                     <p className="detail-text">{selectedName.description}</p>
                     <p className="detail-subtitle">Related name</p>
-                    <p className="detail-meta">
-                      {selectedName.relatedNameIds
-                        .map(
-                          (id) => data.names.find((nameItem) => nameItem.id === id)?.name
-                        )
-                        .filter(Boolean)
-                        .join(' - ') || 'None'}
-                    </p>
-                    <p className="detail-dots">ooo</p>
+                    <p className="detail-meta">{relatedNamesText}</p>
                   </>
                 ) : (
                   <p className="detail-placeholder">Select a name to view details.</p>
@@ -330,6 +415,24 @@ function App() {
               </section>
             </section>
           )}
+
+          <section className="social-links" aria-label="Purina social links">
+            <p className="social-label">Follow Purina</p>
+            <div className="social-icons">
+              {SOCIAL_LINKS.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="social-link"
+                  aria-label={link.label}
+                >
+                  <img src={link.icon} alt={link.label} className="social-icon" />
+                </a>
+              ))}
+            </div>
+          </section>
         </section>
       </section>
     </main>
