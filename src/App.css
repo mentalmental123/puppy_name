@@ -38,7 +38,7 @@
 
 .gender-header p {
   margin: 0;
-  font-size: 0.72rem;
+  font-size: 0.9rem;
   color: #6b6b6b;
 }
 
@@ -53,7 +53,7 @@
   border-radius: 4px;
   background: #fff;
   color: #c85052;
-  font-size: 0.62rem;
+  font-size: 0.72rem;
   padding: 0.24rem 0.54rem;
   cursor: pointer;
 }

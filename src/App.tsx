@@ -1,4 +1,11 @@
-import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import {
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+  type ChangeEvent
+} from 'react';
 import './App.css';
 import coverPuppy from './data/pictures/white-black-puppy.png';
 import detailPuppy from './data/pictures/white-brown-puppy.png';
@@ -28,6 +35,18 @@ const SOCIAL_LINKS = [
     label: 'Purina on X'
   }
 ] as const;
+
+function getGenderLabel(gender: (typeof GENDER_OPTIONS)[number]): string {
+  if (gender === 'male') {
+    return 'Male';
+  }
+
+  if (gender === 'female') {
+    return 'Female';
+  }
+
+  return 'Unisex';
+}
 
 function App() {
   const { data, loading, error } = usePetData();
@@ -67,24 +86,8 @@ function App() {
     }
   }, [selectedNameId, filteredNames]);
 
-  const selectedName = useMemo(() => {
-    return filteredNames.find((item) => item.id === selectedNameId) ?? null;
-  }, [filteredNames, selectedNameId]);
-
-  const visibleNames = useMemo(
-    () => paginate(filteredNames, filters.page, PAGE_SIZE),
-    [filteredNames, filters.page]
-  );
-
-  const categoryLabelById = useMemo(() => {
-    const categories = data?.categories ?? [];
-    return new Map(categories.map((category) => [category.id, category.label]));
-  }, [data]);
-
-  const nameById = useMemo(() => {
-    const names = data?.names ?? [];
-    return new Map(names.map((name) => [name.id, name.name]));
-  }, [data]);
+  const selectedName = filteredNames.find((item) => item.id === selectedNameId) ?? null;
+  const visibleNames = paginate(filteredNames, filters.page, PAGE_SIZE);
 
   useEffect(() => {
     return () => {
@@ -131,19 +134,55 @@ function App() {
       group.categoryIds.includes(category.id)
     )
   }));
+  const showCover = !selectedName && !hasRefinement;
 
   const selectedNameCategoryLabel = selectedName
-    ? (selectedName.categoryIds
-        .map((categoryId) => categoryLabelById.get(categoryId))
-        .find((label): label is string => typeof label === 'string') ?? 'General')
+    ? (data.categories.find((category) => selectedName.categoryIds.includes(category.id))
+        ?.label ?? 'General')
     : 'General';
 
   const relatedNamesText = selectedName
     ? selectedName.relatedNameIds
-        .map((id) => nameById.get(id))
-        .filter((name): name is string => typeof name === 'string')
+        .map((id) => data.names.find((name) => name.id === id)?.name)
+        .filter((name): name is string => Boolean(name))
         .join(' - ') || 'None'
     : 'None';
+
+  function setGender(gender: (typeof GENDER_OPTIONS)[number]) {
+    dispatch({ type: 'set-gender', payload: gender });
+  }
+
+  function setLetter(letter: string) {
+    dispatch({ type: 'set-letter', payload: letter });
+  }
+
+  function setSortDirection(event: ChangeEvent<HTMLSelectElement>) {
+    dispatch({
+      type: 'set-sort',
+      payload: event.target.value as 'asc' | 'desc'
+    });
+  }
+
+  function setSearch(event: ChangeEvent<HTMLInputElement>) {
+    dispatch({ type: 'set-search', payload: event.target.value });
+  }
+
+  function toggleCategory(categoryId: string) {
+    dispatch({ type: 'toggle-category', payload: categoryId });
+  }
+
+  function changePage(nextPage: number) {
+    dispatch({ type: 'set-page', payload: nextPage });
+  }
+
+  function clearFilters() {
+    dispatch({ type: 'clear-filters' });
+    setSelectedNameId(null);
+  }
+
+  function toggleGroup(groupId: string) {
+    setOpenGroupId((current) => (current === groupId ? null : groupId));
+  }
 
   function clearPendingGroupClose() {
     if (closeGroupTimeoutRef.current !== null) {
@@ -178,12 +217,7 @@ function App() {
                 key={gender}
                 type="button"
                 className={filters.gender === gender ? 'pill active' : 'pill'}
-                onClick={() =>
-                  dispatch({
-                    type: 'set-gender',
-                    payload: gender
-                  })
-                }
+                onClick={() => setGender(gender)}
               >
                 {gender[0].toUpperCase() + gender.slice(1)}
               </button>
@@ -213,11 +247,7 @@ function App() {
                     className={
                       isActive || isOpen ? 'toolbar-item active' : 'toolbar-item'
                     }
-                    onClick={() =>
-                      setOpenGroupId((current) =>
-                        current === group.id ? null : group.id
-                      )
-                    }
+                    onClick={() => toggleGroup(group.id)}
                     aria-expanded={isOpen}
                   >
                     {group.label}
@@ -237,9 +267,7 @@ function App() {
                           className={
                             isCategoryActive ? 'dropdown-item is-active' : 'dropdown-item'
                           }
-                          onClick={() =>
-                            dispatch({ type: 'toggle-category', payload: category.id })
-                          }
+                          onClick={() => toggleCategory(category.id)}
                         >
                           {category.label}
                         </button>
@@ -259,9 +287,7 @@ function App() {
                     key={category.id}
                     type="button"
                     className="selected-tag"
-                    onClick={() =>
-                      dispatch({ type: 'toggle-category', payload: category.id })
-                    }
+                    onClick={() => toggleCategory(category.id)}
                   >
                     {category.label}
                   </button>
@@ -278,7 +304,7 @@ function App() {
             <button
               type="button"
               className={filters.letter === 'ALL' ? 'letter is-active' : 'letter'}
-              onClick={() => dispatch({ type: 'set-letter', payload: 'ALL' })}
+              onClick={() => setLetter('ALL')}
             >
               A
             </button>
@@ -287,7 +313,7 @@ function App() {
                 key={letter}
                 type="button"
                 className={filters.letter === letter ? 'letter is-active' : 'letter'}
-                onClick={() => dispatch({ type: 'set-letter', payload: letter })}
+                onClick={() => setLetter(letter)}
               >
                 {letter}
               </button>
@@ -297,12 +323,7 @@ function App() {
           <section className="search-controls" aria-label="Sort and search controls">
             <select
               value={filters.sortDirection}
-              onChange={(event) =>
-                dispatch({
-                  type: 'set-sort',
-                  payload: event.target.value as 'asc' | 'desc'
-                })
-              }
+              onChange={setSortDirection}
               className="toolbar-select"
               aria-label="Sort names"
             >
@@ -314,23 +335,14 @@ function App() {
               value={filters.search}
               placeholder="Search"
               className="toolbar-search"
-              onChange={(event) =>
-                dispatch({ type: 'set-search', payload: event.target.value })
-              }
+              onChange={setSearch}
             />
-            <button
-              type="button"
-              className="toolbar-clear"
-              onClick={() => {
-                dispatch({ type: 'clear-filters' });
-                setSelectedNameId(null);
-              }}
-            >
+            <button type="button" className="toolbar-clear" onClick={clearFilters}>
               Clear
             </button>
           </section>
 
-          {!selectedName && !hasRefinement ? (
+          {showCover ? (
             <section className="cover-card">
               <h2>I NEED A NAME</h2>
               <img src={coverPuppy} alt="Puppy sitting" className="cover-image" />
@@ -342,9 +354,7 @@ function App() {
                   type="button"
                   className="arrow-btn"
                   disabled={filters.page === 1}
-                  onClick={() =>
-                    dispatch({ type: 'set-page', payload: Math.max(1, filters.page - 1) })
-                  }
+                  onClick={() => changePage(Math.max(1, filters.page - 1))}
                   aria-label="Previous page"
                 >
                   ^
@@ -372,12 +382,7 @@ function App() {
                   type="button"
                   className="arrow-btn"
                   disabled={filters.page === totalPages}
-                  onClick={() =>
-                    dispatch({
-                      type: 'set-page',
-                      payload: Math.min(totalPages, filters.page + 1)
-                    })
-                  }
+                  onClick={() => changePage(Math.min(totalPages, filters.page + 1))}
                   aria-label="Next page"
                 >
                   v
@@ -395,11 +400,7 @@ function App() {
                       />
                       <div>
                         <p className="gender-mark">
-                          {selectedName.gender === 'male'
-                            ? 'Male'
-                            : selectedName.gender === 'female'
-                              ? 'Female'
-                              : 'Unisex'}
+                          {getGenderLabel(selectedName.gender)}
                           <span> - {selectedNameCategoryLabel}</span>
                         </p>
                         <h3>{selectedName.name}</h3>

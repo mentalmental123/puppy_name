@@ -1,6 +1,6 @@
 export type Gender = 'male' | 'female' | 'both';
 
-export type GenderFilter = 'male' | 'female' | 'both';
+export type GenderFilter = Gender;
 
 export interface Category {
   id: string;
